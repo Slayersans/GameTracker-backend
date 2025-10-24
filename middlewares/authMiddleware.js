@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: 'No token provider' });
 
@@ -9,6 +10,10 @@ const verifyToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const existUser = await User.findById(decoded.userId);
+        if (!existUser) {
+            return res.status(401).json({ message: 'User does not exist' });
+        }
         req.user = decoded;
         next();
     } catch (error) {
