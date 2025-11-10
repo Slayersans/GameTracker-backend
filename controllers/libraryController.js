@@ -5,7 +5,7 @@ const Game = require('../models/Game');
 exports.getMyLibrary = async (req, res) => {
     try {
         const userId = req.user.userId;
-        const library = await Library.find({ userId }).populate('games');
+        const library = await Library.find({ userId }).populate('gameId');
         res.status(200).json(library);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
@@ -32,8 +32,10 @@ exports.addGameToLibrary = async (req, res) => {
 // Update progress of a game in library
 exports.updateGameProgress = async (req, res) => {
     try {
+
         const userId = req.user.userId;
-        const { gameId, timeplayed, favorite, state } = req.body;
+        const { gameId } = req.params;
+        const { timeplayed, favorite, state } = req.body;
         const libraryEntry = await Library.findOne({ userId, gameId });
         if (!libraryEntry) return res.status(404).json({ message: 'Game not found in library' });
         if (timeplayed !== undefined) libraryEntry.timeplayed = timeplayed;

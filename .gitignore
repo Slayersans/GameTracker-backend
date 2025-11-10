@@ -9,4 +9,3 @@ node_modules/
 
 # Archivos de lock opcionales (si no deseas versionarlos)
 package-lock.json
-package.json
