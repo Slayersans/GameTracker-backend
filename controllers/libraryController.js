@@ -4,9 +4,37 @@ const Game = require('../models/Game');
 // Get my library
 exports.getMyLibrary = async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user.user._id;
         const library = await Library.find({ userId }).populate('gameId');
         res.status(200).json(library);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+// Get a specific game from my library by gameId
+exports.getGameFromLibrary = async (req, res) => {
+    try {
+        const userId = req.user.user._id;
+        const { gameId } = req.params;
+        const libraryEntry = await Library.findOne({ userId, gameId }).populate('gameId');
+        if (!libraryEntry) return res.status(404).json({ message: 'Game not found in library' });
+        res.status(200).json(libraryEntry);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+// Get a specific game from my library by game title
+exports.getGameFromLibraryByTitle = async (req, res) => {
+    try {
+        const userId = req.user.user._id;
+        const { title } = req.params;
+        const game = await Game.findOne({ title });
+        if (!game) return res.status(404).json({ message: 'Game not found' });
+        const libraryEntry = await Library.findOne({ userId, gameId: game._id }).populate('gameId');
+        if (!libraryEntry) return res.status(404).json({ message: 'Game not found in library' });
+        res.status(200).json(libraryEntry);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
@@ -15,7 +43,7 @@ exports.getMyLibrary = async (req, res) => {
 // Add game to library
 exports.addGameToLibrary = async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user.user._id;
         const { gameId } = req.body;
         const game = await Game.findById(gameId);
         if (!game) return res.status(404).json({ message: 'Game not found' });
@@ -33,7 +61,7 @@ exports.addGameToLibrary = async (req, res) => {
 exports.updateGameProgress = async (req, res) => {
     try {
 
-        const userId = req.user.userId;
+        const userId = req.user.user._id;
         const { gameId } = req.params;
         const { timeplayed, favorite, state } = req.body;
         const libraryEntry = await Library.findOne({ userId, gameId });
@@ -51,7 +79,7 @@ exports.updateGameProgress = async (req, res) => {
 // Remove game from library
 exports.removeGameFromLibrary = async (req, res) => {
     try {
-        const userId = req.user.userId;
+        const userId = req.user.user._id;
         const { gameId } = req.params;
         const libraryEntry = await Library.findOneAndDelete({ userId, gameId });
         if (!libraryEntry) return res.status(404).json({ message: 'Game not found in library' });

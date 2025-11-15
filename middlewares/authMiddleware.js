@@ -10,7 +10,7 @@ const verifyToken = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const existUser = await User.findById(decoded.userId);
+        const existUser = await User.findById(decoded.user._id);
         if (!existUser) {
             return res.status(401).json({ message: 'User does not exist' });
         }

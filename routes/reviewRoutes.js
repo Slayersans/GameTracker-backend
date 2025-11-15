@@ -7,6 +7,7 @@ routes.use(authMiddleware);
 
 routes.get('/', reviewController.getAllReviews);
 routes.get('/game/:gameId', reviewController.getReviewsByGameId);
+routes.get('/title/:title', reviewController.getReviewsByGameTitle);
 routes.post('/', reviewController.addReview);
 routes.put('/:id', reviewController.updateReview);
 routes.delete('/:id', reviewController.deleteReview);

@@ -7,6 +7,10 @@ routes.use(authMiddleware);
 
 // Get my library
 routes.get('/', libraryController.getMyLibrary);
+// Get a specific game from my library by gameId
+routes.get('/:gameId', libraryController.getGameFromLibrary);
+// Get a specific game from my library by game title
+routes.get('/title/:title', libraryController.getGameFromLibraryByTitle);
 // Add game to library
 routes.post('/', libraryController.addGameToLibrary);
 // Update progress of a game in library
